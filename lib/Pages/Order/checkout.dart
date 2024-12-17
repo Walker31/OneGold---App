@@ -3,6 +3,7 @@ import 'package:logger/logger.dart';
 import 'package:onegold/API/order_service.dart';
 import 'package:onegold/Models/address.dart';
 import 'package:onegold/Models/cart.dart';
+import 'package:onegold/Pages/Address/saved_address.dart';
 import 'package:onegold/Providers/customer_provider.dart';
 import 'package:provider/provider.dart';
 import '../../Models/order.dart';
@@ -49,7 +50,7 @@ class CheckoutState extends State<Checkout> {
           );
           return;
         }
-
+        logger.i(address);
         final order = Order(
           customerId: customerId,
           addressId: address.addressId,
@@ -79,6 +80,7 @@ class CheckoutState extends State<Checkout> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Order placed successfully!')),
           );
+          Navigator.pop(context);
         }
       } catch (e) {
         logger.e('An error occurred: $e');
@@ -152,7 +154,11 @@ class CheckoutState extends State<Checkout> {
                         ),
                         IconButton(
                           onPressed: () {
-                            // Navigate to address selection or edit page
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const SavedAddress()));
                           },
                           icon: const Icon(
                             Icons.navigate_next,

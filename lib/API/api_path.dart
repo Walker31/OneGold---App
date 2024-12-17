@@ -50,4 +50,6 @@ class APIPath {
   //Endpoints for Address
   static String getAddress(String customerId) =>
       '$baseUrl/customer/address/get?customer_id=$customerId';
+  static String addAddress() => '$baseUrl/customer/address/add';
+  static String deleteAddress() => '$baseUrl/customer/address/delete';
 }

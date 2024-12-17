@@ -23,6 +23,7 @@ class OrderService {
       'payment_type': order.paymentType
     };
     try {
+      logger.d(data);
       final response = await http.post(url,
           headers: {'Content-Type': 'application/json'},
           body: json.encode(data));
@@ -31,6 +32,8 @@ class OrderService {
       } else {
         // Handle error response
         logger.e('Failed to place order: ${response.statusCode}');
+        final responseBody = json.decode(response.body);
+        logger.e('Failed due to: ${responseBody["error"]}');
         return {'error': 'Failed to place order'};
       }
     } catch (e) {

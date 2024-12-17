@@ -25,7 +25,6 @@ class AddressProvider with ChangeNotifier {
       if (_addresses.isNotEmpty) {
         _defaultAddress = _addresses.first;
       }
-
       notifyListeners();
     } catch (e) {
       logger.e('Error fetching addresses: $e');

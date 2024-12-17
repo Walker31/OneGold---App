@@ -4,7 +4,7 @@ import 'package:logger/logger.dart';
 class CustomerProvider extends ChangeNotifier {
   Logger logger = Logger();
   int? _customerId = 3;
-  String? _customerName = 'jjl';
+  String? _customerName = '';
   List<int> _wishlist = [];
 
   // Getter for customerId

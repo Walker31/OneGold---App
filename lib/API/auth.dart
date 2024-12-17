@@ -1,10 +1,8 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:onegold/API/api_path.dart';
 import 'package:onegold/Providers/customer_provider.dart';
-
 import '../Models/customer.dart';
 
 class AuthService {
@@ -12,89 +10,81 @@ class AuthService {
 
   /// Login function
   Future<http.Response> login(String username, String password) async {
-    try {
-      logger.d('Attempting to log in user: $username');
-      final response = await http.post(
-        Uri.parse(APIPath.login()),
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: {
-          'username': username,
-          'password': password,
-        },
-      );
+    final url = APIPath.login();
+    final body = {'username': username, 'password': password};
 
-      logger.i('Login response: ${response.statusCode}, ${response.body}');
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: body,
+      );
       if (response.statusCode == 200) {
-        return response; // return the successful http.Response
       } else {
-        logger.e('Login failed: ${response.statusCode}, ${response.body}');
-        return response; // return the failed http.Response for further handling
+        logger.w('Login failed: ${response.statusCode}, ${response.body}');
       }
+      return response;
     } catch (e) {
-      logger.e('Login exception: $e');
-      // Return a custom Response with error code to handle the exception case
+      logger.e('Exception during login: $e, URL=$url');
       return http.Response('Exception: $e', 500);
     }
   }
 
   /// Fetch customer profile
-  Future<Customer?> getProfile(int customerId, {String? token}) async {
+  Future<Customer?> getProfile(int customerId) async {
+    final url = APIPath.profile(customerId.toString());
     try {
-      logger.d('Fetching profile for customerId: $customerId');
-      final response = await http.get(
-        Uri.parse(APIPath.profile(customerId.toString())),
-        headers: {
-          'Content-Type': 'application/json',
-          if (token != null) 'Authorization': 'Bearer $token',
-        },
-      );
+      final headers = {
+        'Content-Type': 'application/json',
+      };
+
+      final response = await http.get(Uri.parse(url), headers: headers);
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonResponse = json.decode(response.body);
-        logger.d('Profile response: $jsonResponse');
+
         CustomerProvider().setWishlist(jsonResponse['wishlist']);
+
         return Customer.fromJson(jsonResponse);
       } else {
-        logger.e(
-            'Error fetching profile: ${response.statusCode}, ${response.body}');
+        logger.w('Failed to fetch profile: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      logger.e('Exception while fetching profile: $e');
+      logger.e('Exception fetching profile: $e, URL=$url');
       return null;
     }
   }
 
   /// Signup function
   Future<http.Response> signup(
-    String name,
-    String phoneNo,
-    String username,
-    String password,
-  ) async {
+      String name, String phoneNo, String username, String password) async {
+    final url = APIPath.signup();
+    final body = {
+      'name': name,
+      'phone_no': phoneNo,
+      'username': username,
+      'password': password,
+    };
+
     try {
-      logger.d('Signing up user: $username');
+      logger.d('Attempting signup: URL=$url, Body=$body');
       final response = await http.post(
-        Uri.parse(APIPath.signup()),
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: {
-          'name': name,
-          'phone_no': phoneNo,
-          'username': username,
-          'password': password,
-        },
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: body,
       );
 
-      logger.i('Signup response: ${response.statusCode}, ${response.body}');
-      return response; // return the http.Response
+      logger.i('Signup Response: ${response.statusCode}, ${response.body}');
+      if (response.statusCode == 201) {
+        logger.d('Signup successful for user: $username');
+      } else {
+        logger.w('Signup failed: ${response.statusCode}, ${response.body}');
+      }
+      return response;
     } catch (e) {
-      logger.e('Signup exception: $e');
-      return http.Response(
-          'Exception: $e', 500); // Return a custom Response in case of failure
+      logger.e('Exception during signup: $e, URL=$url');
+      return http.Response('Exception: $e', 500);
     }
   }
 }

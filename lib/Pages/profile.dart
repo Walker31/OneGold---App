@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'Address/saved_address.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -11,7 +12,8 @@ class ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.amber.shade400,
+      backgroundColor:
+          Colors.amber.shade100, // Lighter background for better contrast
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         leading: IconButton(
@@ -20,7 +22,10 @@ class ProfileState extends State<Profile> {
             },
             icon: const Icon(Icons.arrow_back_ios_new_outlined)),
         centerTitle: true,
-        title: const Text('Profile'),
+        title: const Text(
+          'Profile',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.only(top: 16),
@@ -31,113 +36,124 @@ class ProfileState extends State<Profile> {
               topLeft: Radius.circular(32),
               topRight: Radius.circular(32),
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                spreadRadius: 1,
+                blurRadius: 5,
+              ),
+            ],
           ),
           child: Padding(
-            padding: const EdgeInsets.all(16), // Inside padding
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const CircleAvatar(
-                  radius: 100, // Controls the size of the circle
+                  radius: 80,
                   backgroundImage: AssetImage('assets/profilePic.png'),
                 ),
                 const SizedBox(
-                  height: 8,
+                  height: 12,
                 ),
                 const Text(
                   'Aditya Janga',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(
-                  height: 8,
+                  height: 6,
                 ),
-                const Text('aditya@example.com'),
+                const Text(
+                  'aditya@example.com',
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
                 const SizedBox(
-                  height: 16,
+                  height: 24,
                 ),
-                Container(
-                  margin: const EdgeInsets.only(top: 12),
-                  decoration: BoxDecoration(
-                      color: Colors.grey.shade400,
-                      borderRadius: BorderRadius.circular(32)),
-                  child: ListTile(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                          12), // Custom shape with rounded corners
-                    ),
-                    leading: const Icon(
-                      Icons.person,
-                      color: Colors.black,
-                    ),
-                    title: const Text(
-                      'Account Information',
-                      style: TextStyle(
-                        color: Colors.black,
-                      ),
-                    ),
-                    trailing: const Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.black,
-                    ),
-                    onTap: () {},
-                  ),
+                // Account Information Section
+                ProfileOption(
+                  title: 'Account Information',
+                  icon: Icons.person,
+                  onTap: () {
+                    // Navigate to the account info page
+                  },
                 ),
-                Container(
-                  margin: const EdgeInsets.only(top: 12, bottom: 12),
-                  decoration: BoxDecoration(
-                      color: Colors.grey.shade400,
-                      borderRadius: BorderRadius.circular(32)),
-                  child: ListTile(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                          12), // Custom shape with rounded corners
-                    ),
-                    leading: const Icon(
-                      Icons.person,
-                      color: Colors.black,
-                    ),
-                    title: const Text(
-                      'Delivery Address',
-                      style: TextStyle(
-                        color: Colors.black,
-                      ),
-                    ),
-                    trailing: const Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.black,
-                    ),
-                    onTap: () {},
-                  ),
+                const SizedBox(height: 12),
+                // Saved Address Section
+                ProfileOption(
+                  title: 'Saved Address',
+                  icon: Icons.location_on,
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SavedAddress()));
+                  },
                 ),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  decoration: BoxDecoration(
-                      color: Colors.grey.shade400,
-                      borderRadius: BorderRadius.circular(32)),
-                  child: ListTile(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                          12), // Custom shape with rounded corners
-                    ),
-                    leading: const Icon(
-                      Icons.person,
-                      color: Colors.black,
-                    ),
-                    title: const Text(
-                      'Payment Method',
-                      style: TextStyle(
-                        color: Colors.black,
-                      ),
-                    ),
-                    trailing: const Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.black,
-                    ),
-                    onTap: () {},
-                  ),
-                )
+                const SizedBox(height: 12),
+                // Payment Method Section
+                ProfileOption(
+                  title: 'Payment Method',
+                  icon: Icons.payment,
+                  onTap: () {
+                    // Navigate to payment method page
+                  },
+                ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ProfileOption extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const ProfileOption({
+    super.key,
+    required this.title,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 5,
+              spreadRadius: 1,
+            ),
+          ],
+        ),
+        child: ListTile(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          leading: Icon(
+            icon,
+            color: Colors.black,
+          ),
+          title: Text(
+            title,
+            style: const TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          trailing: const Icon(
+            Icons.arrow_forward_ios,
+            color: Colors.black,
           ),
         ),
       ),

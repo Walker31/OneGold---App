@@ -65,7 +65,8 @@ class ProductCardState extends State<ProductCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 12),
+            SizedBox.square(
+                dimension: 200, child: Image.asset('assets/necklace.jpg')),
             Text(
               widget.product.productName,
               style: const TextStyle(
@@ -74,7 +75,6 @@ class ProductCardState extends State<ProductCard> {
                 color: Colors.black87,
               ),
             ),
-            const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

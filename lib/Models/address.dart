@@ -9,7 +9,7 @@ class Address {
 
   // Default values are set to 'Unknown' where applicable
   Address({
-    required this.addressId,
+    this.addressId = 0,
     required this.pincode,
     required this.city,
     required this.state,
@@ -21,13 +21,18 @@ class Address {
   // Factory method to create Address from JSON
   factory Address.fromJson(Map<String, dynamic> json) {
     return Address(
-      addressId: json['address_id'] as int? ?? 0,  // Default to 0 if null
-      pincode: json['postal_code'] as String? ?? 'Unknown', // Default to 'Unknown'
-      city: json['city'] as String? ?? 'Unknown',  // Default to 'Unknown'
-      state: json['state'] as String? ?? 'Unknown',  // Default to 'Unknown'
-      location: json['location'] as String? ?? 'Unknown',  // Default to 'Unknown'
-      landmark: json['landmark'] as String? ?? 'Unknown',  // Default to 'Unknown'
-      createdAt: DateTime.tryParse(json['created_at'] ?? '') ?? DateTime.now(),  // Default to current time if parsing fails
+      addressId: json['id'] as int? ?? 0, // Default to 0 if null
+      pincode:
+          json['postal_code'] as String? ?? 'Unknown', // Default to 'Unknown'
+      city: json['city'] as String? ?? 'Unknown', // Default to 'Unknown'
+      state: json['state'] as String? ?? 'Unknown', // Default to 'Unknown'
+      location:
+          json['location'] as String? ?? 'Unknown', // Default to 'Unknown'
+      landmark:
+          json['landmark'] as String? ?? 'Unknown', // Default to 'Unknown'
+      createdAt: json['created_at'] != null && json['created_at'].isNotEmpty
+          ? DateTime.tryParse(json['created_at']) ?? DateTime.now()
+          : DateTime.now(), // Default to current time if parsing fails
     );
   }
 

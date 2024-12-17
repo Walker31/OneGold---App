@@ -156,12 +156,11 @@ class CartPageState extends State<CartPage> {
                       const SizedBox(height: 24),
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.push(
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => Checkout(
-                                cartItems: productList,
-                              ),
+                              builder: (context) =>
+                                  Checkout(cartItems: productList),
                             ),
                           );
                         },

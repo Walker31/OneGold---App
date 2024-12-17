@@ -40,8 +40,12 @@ class Product {
       categoryName: json['category_name'] as String? ?? 'Uncategorized',
       productPrice: double.tryParse(json['product_price'].toString()) ?? 0.0,
       stockQuantity: json['stock_quantity'] as int? ?? 0,
-      createdAt: DateTime.tryParse(json['created_at'] ?? '') ?? DateTime.now(),
-      updatedAt: DateTime.tryParse(json['updated_at'] ?? '') ?? DateTime.now(),
+      createdAt: json['created_at'] != null && json['created_at'].isNotEmpty
+          ? DateTime.tryParse(json['created_at']) ?? DateTime.now()
+          : DateTime.now(),
+      updatedAt: json['updated_at'] != null && json['updated_at'].isNotEmpty
+          ? DateTime.tryParse(json['updated_at']) ?? DateTime.now()
+          : DateTime.now(),
       reviews: (json['reviews'] as List<dynamic>?)
               ?.map((reviewJson) => Review.fromJson(reviewJson))
               .toList() ??

@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:onegold/Providers/address_provider.dart';
+import 'package:onegold/Providers/customer_provider.dart';
 import 'package:provider/provider.dart';
-import '../API/auth.dart'; // Your AuthService for API calls
-import '../Models/customer.dart'; // Customer model
-import '../Providers/address_provider.dart'; // Address Provider
-import '../Providers/customer_provider.dart'; // Customer Provider
-import 'main_store.dart'; // Page to navigate after login
+import '../API/auth.dart';
+import 'main_store.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -50,32 +49,37 @@ class LoginState extends State<Login> {
         passwordController.text,
       );
 
+      logger.d('Response received: ${response.statusCode}');
+      logger.d('Response body: ${response.body}');
+
       if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        final int customerId = responseData['customer_id'];
+        try {
+          final responseData = jsonDecode(response.body);
+          final int customerId = responseData['customer_id'];
+          final String customerName = responseData['username'];
 
-        if (!mounted) return;
+          logger.d('Customer ID: $customerId  Customer Name: $customerName');
 
-        final Customer? customer = await authService.getProfile(customerId);
-        final String customerName = customer?.name ?? 'Unknown';
-
-        Provider.of<CustomerProvider>(context, listen: false)
-            .setCustomerInfo(customerId, customerName);
-
-        await Provider.of<AddressProvider>(context, listen: false)
+          CustomerProvider().setCustomerInfo(customerId, customerName);
+          await Provider.of<AddressProvider>(context, listen: false)
             .fetchAddresses(customerId);
 
-        logger.i('Login successful! Customer ID: $customerId');
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const Store()),
-        );
+          logger.i('Login successful! Navigating to Store.');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const Store()),
+          );
+        } catch (e) {
+          logger.e('Error decoding response or fetching profile: $e');
+          showSnackBar('Error processing login: $e');
+        }
       } else {
+        logger.e('Login failed: ${response.body}');
         showSnackBar('Login failed: ${response.body}');
       }
     } catch (e) {
+      logger.e('Error during login: $e');
       showSnackBar('An error occurred: $e');
-      logger.e('Login error: $e');
     } finally {
       setState(() => isLoading = false);
     }
@@ -151,7 +155,8 @@ class LoginState extends State<Login> {
           ? const CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
             )
-          : Text(text, style: const TextStyle(color: Colors.black, fontSize: 16)),
+          : Text(text,
+              style: const TextStyle(color: Colors.black, fontSize: 16)),
     );
   }
 
@@ -200,7 +205,7 @@ class LoginState extends State<Login> {
 
                 // Password Field
                 buildTextField(passwordController, 'Password',
-                    obscureText: true),
+                    obscureText: false),
                 const SizedBox(height: 15),
 
                 if (!isLogin)

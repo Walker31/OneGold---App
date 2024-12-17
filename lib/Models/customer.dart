@@ -5,7 +5,6 @@ class Customer {
   final String phoneNo;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final List<int> wishlist;
 
   Customer({
     required this.customerId,
@@ -14,7 +13,6 @@ class Customer {
     required this.phoneNo,
     required this.createdAt,
     required this.updatedAt,
-    this.wishlist = const [],
   });
 
   // Factory method to create Customer from JSON
@@ -25,7 +23,6 @@ class Customer {
     final phoneNo = json['phone_no'];
     final createdAt = json['created_at'];
     final updatedAt = json['updated_at'];
-    final wishlist = json['wishlist'];
 
     return Customer(
       customerId: customerId as int,
@@ -34,7 +31,6 @@ class Customer {
       phoneNo: phoneNo as String,
       createdAt: createdAt != null ? DateTime.parse(createdAt) : DateTime.now(),
       updatedAt: updatedAt != null ? DateTime.parse(updatedAt) : DateTime.now(),
-      wishlist: wishlist != null ? List<int>.from(wishlist) : [],
     );
   }
 
@@ -47,12 +43,11 @@ class Customer {
       'phone_no': phoneNo,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
-      'wishlist': wishlist,
     };
   }
 
   @override
   String toString() {
-    return 'Customer{name: $name, phoneNo: $phoneNo}}';
+    return 'Customer{name: $name, phoneNo: $phoneNo}';
   }
 }
