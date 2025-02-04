@@ -1,2 +1,2 @@
 # OneGold
- Shopping App
+ App for Jewellery Store
